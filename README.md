@@ -105,11 +105,28 @@ parse, or otherwise handle in you `onData()` callback.
 uart.configure(QM_UART_BAUD_RATE, 8, PARITY_NONE, 1, 0, function() {
     // For some applications, this might be sufficient.  Others may wish to
     // buffer, filter, split, or otherwise clean this data before passing it into
-    // `.feed()`
+    // `.feed()`. See below
     at.feed(uart.readstring());
 }.bindenv(this));
-```
 
+// Another potential way to handle UART data...
+// LineTokenizer is included in `libs`. It is designed to read in UART data then
+// strip out null characters, split on carriage returns, strip leading and trailing
+// whitespace, and finally output nice and clean lines of text, which in this
+// case are the input to the AT instance. LineTokenizer also waits a split second
+// before emitting tokens from its buffer, in case single lines of text are split
+// and received as multiple UART packets.
+local tokenizer = LineTokenizer();
+
+// When the tokizer has a token (a line), feed it to the AT lib
+tokenizer.onToken(at.feed.bindenv(at))
+
+// When the UART has data, feed it into the tokenizer.  The UART sends raw data
+// to the tokenizer, the tokenizer sends nice tokens to the AT instance
+uart.configure(QM_UART_BAUD_RATE, 8, PARITY_NONE, 1, 0, function() {
+  tokenizer.feed(uart.readstring());
+});
+```
 ---
 
 ### cmd(*cmd[, t], onData, onDone*)
