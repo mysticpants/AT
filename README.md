@@ -17,6 +17,20 @@ use cases, such as matching a fixed sequence of strings, or a regexp.  The
 `.register()` method can be used to intercept and handle "unsolicited" data
 from the partner (URCs).
 
+### Motivation
+
+When working with AT commands to an external device you must send and receive
+data as text. Complications arise well beyond the basic “send ping, receive
+pong”:
+
+- The partner’s response time may vary
+- The partner may stop responding (you need timeouts)
+- Multiple responses may need to be matched, either in a specific order or not
+- The partner may interject with extra, unsolicited messages at any time
+- Multiple commands may need to be chained together
+- The commands that are sent, and what data they contain, may depend on the
+  results of previous commands (e.g. for retries or branching logic)
+
 ## Credit
 
 Thanks to [Gordon Williams](https://github.com/gfwilliams), [Pur3
