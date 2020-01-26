@@ -1,0 +1,8 @@
+**/.impt.auth
+**/.impt.project
+**/.impt.test
+**/builds
+**/build
+**/node_modules
+**/*.swp
+**/*.swo
